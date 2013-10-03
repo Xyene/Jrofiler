@@ -6,8 +6,6 @@ import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.ClassFileTransformer;
 import java.lang.instrument.IllegalClassFormatException;
 import java.lang.instrument.Instrumentation;
-import java.lang.reflect.Method;
-import java.net.URL;
 import java.security.ProtectionDomain;
 
 public class ProfilingAgent implements ClassFileTransformer {
@@ -27,15 +25,13 @@ public class ProfilingAgent implements ClassFileTransformer {
         Class[] loaded = instrumentation.getInitiatedClasses(ClassLoader.getSystemClassLoader());
 
         for (Class c : loaded) {
-            if (!c.isArray())
+            if (!c.isArray()) {
                 try {
-                    Method findResource = ClassLoader.class.getDeclaredMethod("findResource", String.class);
-                    findResource.setAccessible(true);
-                    URL resource = (URL) findResource.invoke(ClassLoader.getSystemClassLoader(), c.getName().replace('.', '/') + ".class");
-                    instrumentation.redefineClasses(new ClassDefinition(c, Tools.getBytesFromStream(resource.openStream())));
+                    instrumentation.redefineClasses(new ClassDefinition(c, Tools.getBytesFromClass(c)));
                 } catch (Exception ignored) {
                     // Some classes just aren't meant to be redefined.
                 }
+            }
         }
     }
 
