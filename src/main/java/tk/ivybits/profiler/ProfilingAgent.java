@@ -1,10 +1,6 @@
 package tk.ivybits.profiler;
 
-import sun.misc.Launcher;
 import tk.ivybits.agent.Tools;
-import org.objectweb.asm.*;
-
-import static org.objectweb.asm.Opcodes.*;
 
 import java.lang.instrument.ClassDefinition;
 import java.lang.instrument.ClassFileTransformer;
@@ -13,14 +9,7 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.ProtectionDomain;
-import java.util.Arrays;
 
-/**
- * Primary class used by tests to allow for method profiling information. Client
- * code will interact with this method only. This class is NOT thread safe.
- *
- * @author Tudor
- */
 public class ProfilingAgent implements ClassFileTransformer {
 
     private static Instrumentation instrumentation = null;
@@ -31,7 +20,6 @@ public class ProfilingAgent implements ClassFileTransformer {
     }
 
     public static void agentmain(String string, Instrumentation instrument) {
-        // initialization code:
         transformer = new ProfilingAgent();
         instrumentation = instrument;
         instrumentation.addTransformer(transformer);
@@ -69,7 +57,7 @@ public class ProfilingAgent implements ClassFileTransformer {
         }
 
         // Don't profile yourself, otherwise you'll die in a StackOverflow.
-        if (className.startsWith("tk/ivybits/profiler")) {
+        if (className.startsWith("tk/ivybits/profiler") || className.startsWith("tk/ivybits/agent")) {
             return classBuffer;
         }
 
