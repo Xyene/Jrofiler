@@ -1,7 +1,7 @@
 Jrofiler
 ========
 
-The final Java solution to large programs with performance problems.
+The inline solution to Java programs with performance problems.
 
 Compilation
 -----------
